@@ -1,0 +1,13 @@
+# PDFs (personal nutrition plans - no subir)
+*.pdf
+
+# Images folders
+bono5_images/
+infusions_images/
+
+# Markdown draft
+BATCH-COOKING-PLAN.md
+
+# OS files
+Thumbs.db
+.DS_Store

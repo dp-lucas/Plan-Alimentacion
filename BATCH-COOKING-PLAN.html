@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Prep Semanal - Lucas Di Pietro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        :root {
+            --bg:#0f1117;--s1:#1a1d27;--s2:#232733;--s3:#2c3040;--brd:#353a4a;
+            --t:#e8eaed;--td:#9aa0b0;--tm:#6b7280;
+            --blue:#60a5fa;--blue-d:rgba(96,165,250,.12);
+            --green:#34d399;--green-d:rgba(52,211,153,.12);
+            --orange:#fb923c;--orange-d:rgba(251,146,60,.12);
+            --red:#f87171;--red-d:rgba(248,113,113,.12);
+            --purple:#a78bfa;--purple-d:rgba(167,139,250,.12);
+            --yellow:#fbbf24;--yellow-d:rgba(251,191,36,.12);
+            --cyan:#22d3ee;--cyan-d:rgba(34,211,238,.12);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);line-height:1.6;-webkit-font-smoothing:antialiased}
+        .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px}
+        .hero{text-align:center;padding:56px 24px 40px}
+        .hero h1{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:900;letter-spacing:-.03em;line-height:1.15;background:linear-gradient(135deg,#fff,#60a5fa 60%,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+        .hero p{color:var(--td);font-size:1rem;max-width:520px;margin:0 auto}
+        .hero-nums{display:flex;justify-content:center;gap:40px;margin-top:28px;flex-wrap:wrap}
+        .hero-num{text-align:center}
+        .hero-num .n{font-size:2.2rem;font-weight:900;font-family:'JetBrains Mono',monospace}
+        .hero-num .l{font-size:.72rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+
+        .section{margin-bottom:48px}
+        .sh{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--brd)}
+        .sh-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+        .sh h2{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+        .sh .sub{font-size:.82rem;color:var(--tm);font-weight:400}
+
+        .meal{background:var(--s1);border:1px solid var(--brd);border-radius:16px;padding:0;margin-bottom:20px;overflow:hidden}
+        .meal-head{padding:20px 24px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+        .meal-head h3{font-size:1.1rem;font-weight:800}
+        .meal-tag{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700}
+        .meal-body{padding:16px 24px 22px}
+        .meal-body p{font-size:.88rem;color:var(--td);margin-bottom:6px}
+
+        .macro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:14px 0}
+        .macro{background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px;text-align:center}
+        .macro .val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700}
+        .macro .lbl{font-size:.68rem;color:var(--tm);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+        .recipe-box{background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:16px 18px;margin-top:14px}
+        .recipe-box h4{font-size:.82rem;font-weight:700;color:var(--blue);margin-bottom:8px}
+        .recipe-box ul{list-style:none;padding:0}
+        .recipe-box li{font-size:.84rem;color:var(--td);padding:3px 0 3px 18px;position:relative}
+        .recipe-box li::before{content:'';position:absolute;left:3px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--brd)}
+        .recipe-box ol{list-style:none;counter-reset:s;padding:0}
+        .recipe-box ol li{counter-increment:s;padding-left:24px}
+        .recipe-box ol li::before{content:counter(s);width:16px;height:16px;border-radius:50%;background:var(--blue-d);border:1px solid rgba(96,165,250,.3);color:var(--blue);font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;position:absolute;left:0;top:5px}
+
+        .warn{background:var(--s1);border:1px solid var(--brd);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+        .warn.red{border-left-color:var(--red)}
+        .warn.green{border-left-color:var(--green)}
+        .warn.blue{border-left-color:var(--blue)}
+        .warn h4{font-size:.82rem;font-weight:700;margin-bottom:4px}
+        .warn p,.warn li{font-size:.84rem;color:var(--td)}
+        .warn ul{list-style:disc;padding-left:18px}
+
+        .batch-card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+        .batch-card h3{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+        .batch-tag{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700}
+
+        .tbl{width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;border:1px solid var(--brd);margin:14px 0}
+        .tbl th{background:var(--s2);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tm);padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd)}
+        .tbl td{padding:10px 14px;font-size:.84rem;border-bottom:1px solid var(--brd);color:var(--td)}
+        .tbl tr:last-child td{border-bottom:none}
+        .tbl .fn{font-weight:600;color:var(--t)}
+
+        .shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+        .shop{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:18px 20px}
+        .shop h3{font-size:.88rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .si{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:.84rem;color:var(--td);cursor:pointer}
+        .sc{width:18px;height:18px;border-radius:5px;border:2px solid var(--brd);flex-shrink:0;transition:.2s;display:flex;align-items:center;justify-content:center}
+        .sc.ck{background:var(--green);border-color:var(--green)}
+        .sc.ck::after{content:'\2713';color:var(--bg);font-size:.68rem;font-weight:900}
+        .si.ck-item{text-decoration:line-through;color:var(--tm)}
+
+        .timeline{position:relative;padding-left:28px}
+        .timeline::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:var(--brd)}
+        .tl-item{position:relative;padding:10px 0 22px}
+        .tl-dot{position:absolute;left:-28px;top:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;font-family:'JetBrains Mono',monospace;z-index:2}
+        .tl-time{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--blue);margin-bottom:3px}
+        .tl-title{font-weight:700;font-size:.9rem;margin-bottom:4px}
+        .tl-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+        .tl-tag{padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600}
+
+        .footer{text-align:center;padding:32px 24px;border-top:1px solid var(--brd);color:var(--tm);font-size:.8rem}
+
+        @media print{body{background:#fff;color:#111}.meal,.batch-card,.shop,.warn{background:#fafafa;border:1px solid #ccc}.hero h1{background:none;-webkit-text-fill-color:#111}}
+        @media(max-width:640px){.wrap{padding:0 16px 60px}.macro-grid{grid-template-columns:1fr 1fr}.hero-nums{gap:20px}}
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <h1>4 Comidas. Todos los Dias. Cero Decisiones.</h1>
+    <p>Cada comida respeta los macros exactos de tu nutricionista. Cocinas una vez, comes toda la semana.</p>
+    <div class="hero-nums">
+        <div class="hero-num"><div class="n" style="color:var(--blue)">4</div><div class="l">Comidas / dia</div></div>
+        <div class="hero-num"><div class="n" style="color:var(--green)">~2h</div><div class="l">Domingo</div></div>
+        <div class="hero-num"><div class="n" style="color:var(--orange)">&lt;5</div><div class="l">Min prep diario</div></div>
+        <div class="hero-num"><div class="n" style="color:var(--purple)">0</div><div class="l">Decisiones</div></div>
+    </div>
+</header>
+
+<div class="wrap">
+
+<!-- ====== TUS 4 COMIDAS ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--blue-d);color:var(--blue)">&#x1F37D;</div>
+        <div><h2>Tus 4 Comidas</h2><div class="sub">Exactamente lo mismo todos los dias. Macros verificados contra el MASTERPLAN.</div></div>
+    </div>
+
+    <!-- DESAYUNO -->
+    <div class="meal" style="border-top:3px solid var(--yellow)">
+        <div class="meal-head">
+            <h3>&#x2600; Desayuno &mdash; Tostadas Francesas Proteicas</h3>
+            <span class="meal-tag" style="background:var(--yellow-d);color:var(--yellow)">Receta de tu nutricionista</span>
+        </div>
+        <div class="meal-body">
+            <p>Receta exacta del Recetario Lucas Di Pietro de Nut. Segatore Emanuel. No se modifica nada.</p>
+            <div class="macro-grid">
+                <div class="macro"><div class="val" style="color:var(--red)">1 + 1</div><div class="lbl">Huevo + clara</div></div>
+                <div class="macro"><div class="val" style="color:var(--purple)">1/2 scoop</div><div class="lbl">Proteina (15g)</div></div>
+                <div class="macro"><div class="val" style="color:var(--yellow)">3 reb<span style="font-size:.7rem;color:var(--tm);display:block">~100g cocidas</span></div><div class="lbl">Pan (75g crudo)</div></div>
+                <div class="macro"><div class="val" style="color:var(--blue)">2 cdas</div><div class="lbl">Leche proteica (30ml)</div></div>
+                <div class="macro"><div class="val" style="color:var(--green)">80-100g</div><div class="lbl">Frutillas o banana</div></div>
+                <div class="macro"><div class="val" style="color:var(--orange)">2 cditas</div><div class="lbl">Pasta mani (10g)</div></div>
+            </div>
+            <div class="recipe-box">
+                <h4>Preparacion &mdash; 1 porcion</h4>
+                <ol>
+                    <li>En un bowl colocar <strong>1 huevo + 1 clara + 2 cdas leche proteica (30ml)</strong>. Agregar <strong>1/2 scoop de proteina en polvo (15g)</strong>. Mezclar hasta homogeneizar.</li>
+                    <li>Remojar <strong>3 rebanadas de pan (75g)</strong> por ambos lados para que absorba la mezcla</li>
+                    <li>Llevar a sarten antiadherente vuelta y vuelta a fuego bajo hasta que se cocinen (se forme costra)</li>
+                    <li>Cocinar las tostadas <strong>junto con toda la mezcla restante</strong> (no desperdiciarla)</li>
+                    <li>Servir con <strong>1 punado de frutillas o 1 banana troceada (80-100g)</strong> + <strong>2 cditas pasta de mani (10g)</strong></li>
+                </ol>
+            </div>
+            <div class="warn green" style="margin-top:12px">
+                <h4>&#x2744; Freezer</h4>
+                <p><strong>Se congela perfecto.</strong> Hacelas el domingo (7 porciones de 3 tostadas). Apila con film entre cada grupo de 3. Cada manana: airfryer 170&deg;C x 3-4 min. La fruta y la pasta de mani siempre frescas al servir.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALMUERZO -->
+    <div class="meal" style="border-top:3px solid var(--green)">
+        <div class="meal-head">
+            <h3>&#x1F957; Almuerzo &mdash; Carne y Verduras</h3>
+            <span class="meal-tag" style="background:var(--green-d);color:var(--green)">SIN CARBOHIDRATOS</span>
+        </div>
+        <div class="meal-body">
+            <p>El almuerzo del MASTERPLAN no lleva carbohidratos. Solo proteina + vegetales + grasa.</p>
+            <div class="macro-grid">
+                <div class="macro"><div class="val" style="color:var(--red)">200g<span style="font-size:.7rem;color:var(--tm);display:block">~140g cocido</span></div><div class="lbl">Bife de carne</div></div>
+                <div class="macro"><div class="val" style="color:var(--green)">1/2 plato<span style="font-size:.7rem;color:var(--tm);display:block">min 200g crudo &rarr; ~150g cocido</span></div><div class="lbl">Verduras asadas</div></div>
+                <div class="macro"><div class="val" style="color:var(--yellow)">1 cdita</div><div class="lbl">Aceite oliva (5ml)</div></div>
+                <div class="macro"><div class="val" style="color:var(--blue)">1 vaso</div><div class="lbl">Agua</div></div>
+            </div>
+            <div class="recipe-box" style="border-left:3px solid var(--green)">
+                <h4>&#x2705; Opcion A: Olla a presion (RECOMENDADA &mdash; carne jugosa)</h4>
+                <ul>
+                    <li><strong>1.4 kg de bife de carne magra</strong> (7 &times; 200g), condimentar con sal, pimienta, ajo en polvo, pimenton, oregano</li>
+                    <li>Poner <strong>1 cebolla cortada en rodajas gruesas en el fondo</strong> de la olla (actua como base, evita que la carne toque el metal y se pegue)</li>
+                    <li>Apoyar los bifes encima de la cebolla. Agregar <strong>500ml de agua o caldo</strong> (debe cubrir al menos 1/3 de la carne)</li>
+                    <li><strong>20-25 minutos</strong> desde que toma presion. Dejar que la presion baje sola (no abrir forzado). La carne sale tierna y jugosa</li>
+                    <li>Verduras aparte: <strong>al horno 200&deg;C por 25 min</strong> (zucchini, zanahoria, morron, cebolla en trozos)</li>
+                    <li>Dejar enfriar. Porcionar en <strong>7 tuppers</strong>: ~140g carne cocida + 2-3 cdas jugo de coccion + ~150g verduras cocidas. <strong>Cada tupper pesa ~300-320g</strong></li>
+                    <li>Agregar 1 cdita de aceite oliva a cada tupper al servir (no antes de freezar)</li>
+                </ul>
+            </div>
+            <div class="recipe-box" style="margin-top:10px">
+                <h4>Opcion B: Horno (si preferis todo junto)</h4>
+                <ul>
+                    <li><strong>1.4 kg de bife de carne magra</strong> (7 &times; 200g) + verduras en bandejas grandes</li>
+                    <li>&#x1F4A1; <strong>Para que no se seque:</strong> cubrir la bandeja con papel aluminio los primeros 20 min. Destapar los ultimos 10 min para dorar</li>
+                    <li>Poner <strong>1 taza de agua o caldo en el fondo de la bandeja</strong> (genera vapor y mantiene humedad)</li>
+                    <li>Horno <strong>180&deg;C por 30 min</strong> (tapado) + 10 min destapado. No pasar de 70&deg;C interno</li>
+                    <li>Porcionar en 7 tuppers: ~140g carne + ~150g verduras + jugo. <strong>~300-320g por tupper</strong></li>
+                </ul>
+            </div>
+            <div class="warn green">
+                <h4>&#x2744; Freezer y recalentado</h4>
+                <p>3-4 tuppers a la heladera (consumir en 4 dias). El resto al freezer (dura 2-3 meses).</p>
+                <p style="margin-top:6px"><strong>Recalentar sin que se seque:</strong> agregar <strong>1-2 cdas de agua o caldo al tupper</strong>, tapar sin cerrar del todo, <strong>micro 3 min</strong>. El vapor rehidrata la carne. Sacar del freezer la noche anterior a la heladera.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MERIENDA -->
+    <div class="meal" style="border-top:3px solid var(--orange)">
+        <div class="meal-head">
+            <h3>&#x1F963; Merienda &mdash; Yogur Bowl</h3>
+            <span class="meal-tag" style="background:var(--orange-d);color:var(--orange)">MASTERPLAN Opcion 2</span>
+            <span class="meal-tag" style="background:var(--red-d);color:var(--red)">En dias de gym: 75-90 min antes de entrenar</span>
+        </div>
+        <div class="meal-body">
+            <p>Se arma en el momento. 2 minutos. Podes hacer el yogur casero en tu yogurtera (1 batch por semana).</p>
+            <div class="macro-grid">
+                <div class="macro"><div class="val" style="color:var(--blue)">200ml</div><div class="lbl">Yogur natural desc</div></div>
+                <div class="macro"><div class="val" style="color:var(--yellow)">30g</div><div class="lbl">Avena (3 cdas)</div></div>
+                <div class="macro"><div class="val" style="color:var(--purple)">1/2 scoop</div><div class="lbl">Prote en polvo</div></div>
+                <div class="macro"><div class="val" style="color:var(--orange)">10g</div><div class="lbl">Pasta mani (2 cditas)</div></div>
+                <div class="macro"><div class="val" style="color:var(--green)">1 pieza</div><div class="lbl">Fruta 80-100g</div></div>
+            </div>
+            <div class="recipe-box">
+                <h4>Ensamblado diario &mdash; 2 minutos</h4>
+                <ol>
+                    <li>200ml yogur natural proteico/casero (sin azucar, descremado) en un bowl</li>
+                    <li>30g avena instantanea o copos de maiz sin azucar o granola o quinoa pop</li>
+                    <li>1/2 scoop proteina en polvo</li>
+                    <li>10g pasta de mani (2 cditas) <strong>o</strong> 15g frutos secos (nueces, almendras, pistachos)</li>
+                    <li>1 fruta troceada 80-100g (manzana, pera, durazno, banana chica, frutillas)</li>
+                    <li>Edulcorante y/o esencia de vainilla al gusto</li>
+                </ol>
+            </div>
+            <div class="warn blue">
+                <h4>&#x1F4A1; Yogurtera</h4>
+                <p>2 litros de yogur casero (leche descremada + 100g yogur natural de almacen) te alcanzan para <strong>10 dias</strong> (200ml &times; 10). Hacelo el domingo o cada vez que se termine. Yogur casero = alimento real, sin aditivos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CENA -->
+    <div class="meal" style="border-top:3px solid var(--purple)">
+        <div class="meal-head">
+            <h3>&#x1F319; Cena &mdash; Milanesas de Pollo + Ensalada</h3>
+            <span class="meal-tag" style="background:var(--red-d);color:var(--red)">REGLA MILANESA: carbos a la MITAD</span>
+        </div>
+        <div class="meal-body">
+            <p>Milanesa = preparacion empanada. El MASTERPLAN indica reducir los carbohidratos de la cena a la mitad. Igual necesitas una porcion reducida de carbos porque "todo esta calculado".</p>
+            <div class="macro-grid">
+                <div class="macro"><div class="val" style="color:var(--red)">200g<span style="font-size:.7rem;color:var(--tm);display:block">~190g cocida</span></div><div class="lbl">Suprema de pollo</div></div>
+                <div class="macro"><div class="val" style="color:var(--green)">1/2 plato<span style="font-size:.7rem;color:var(--tm);display:block">min 150g fresca</span></div><div class="lbl">Ensalada</div></div>
+                <div class="macro"><div class="val" style="color:var(--yellow)">100g<span style="font-size:.7rem;color:var(--tm);display:block">~75g cocida</span></div><div class="lbl">Papa al horno (mitad)</div></div>
+                <div class="macro"><div class="val" style="color:var(--orange)">1 cdita</div><div class="lbl">Aceite oliva (5ml)</div></div>
+                <div class="macro"><div class="val" style="color:var(--blue)">1 vaso</div><div class="lbl">Agua</div></div>
+            </div>
+            <div class="recipe-box">
+                <h4>Receta milanesas &mdash; 7 porciones de una</h4>
+                <ul>
+                    <li><strong>1.4 kg suprema de pollo</strong> (7 &times; 200g crudo) &mdash; cortar cada pieza en 2 bifes finos o aplanar con martillo/cuchillo</li>
+                    <li>Pasar por <strong>huevo batido</strong> (aparte de los del desayuno, ~3 huevos para empanar)</li>
+                    <li>Rebozar en <strong>pan rallado integral</strong> + pimenton + ajo en polvo + oregano + sal</li>
+                    <li>Colocar en bandejas con papel manteca/film entre capas</li>
+                    <li><strong>Congelar CRUDAS</strong> &mdash; no cocinar. Se cocinan frescas cada noche</li>
+                </ul>
+            </div>
+            <div class="warn green">
+                <h4>&#x2744; Del freezer a la airfryer &mdash; sin descongelar</h4>
+                <p><strong>Airfryer 200&deg;C por 12-15 min</strong> (dar vuelta a mitad). Directo del freezer, sin descongelar. Mientras se hacen, armas la ensalada.</p>
+            </div>
+            <div class="recipe-box" style="margin-top:10px;border-left:3px solid var(--purple)">
+                <h4 style="color:var(--purple)">Cheat codes: milanesa jugosa en airfryer</h4>
+                <ol>
+                    <li><strong>Rociar con aceite en spray ambos lados</strong> antes de meter a la airfryer. Una pasada fina. Sella el empanado, dora parejo y retiene humedad adentro</li>
+                    <li><strong>NO apilar ni superponer.</strong> Dejar espacio entre milanesas para que circule el aire. Si no entran, cocinar en 2 tandas</li>
+                    <li><strong>Bifes FINOS (1cm max):</strong> cuanto mas finos, mas rapido se cocinan y menos se secan. Aplanar bien con martillo o cuchillo pesado al empanar</li>
+                    <li><strong>Dar vuelta a los 6-7 min.</strong> Rociar de nuevo con spray en el lado que quedo arriba</li>
+                    <li><strong>NO pasarse de 12-13 min total.</strong> Mejor sacar 1 min antes que 1 min despues. El pollo fino se cocina rapido y cada minuto extra lo seca</li>
+                    <li><strong>Dejar reposar 2 minutos</strong> antes de cortar. Los jugos se redistribuyen</li>
+                    <li><strong>Truco del doble empanado:</strong> huevo &rarr; pan rallado &rarr; huevo &rarr; pan rallado. La doble capa sella mejor y mantiene mas jugos adentro</li>
+                </ol>
+            </div>
+            <div class="recipe-box" style="margin-top:10px">
+                <h4>Papa al horno (mitad porcion por regla milanesa)</h4>
+                <ul>
+                    <li><strong>700g de papa</strong> total (7 &times; 100g crudo) &mdash; cortar en cubos con cascara</li>
+                    <li>Horno 200&deg;C &times; 25 min el domingo. Porcionar en <strong>bolsas de ~75g cocida</strong> (cada 100g crudo rinde ~75g asada). Freezer.</li>
+                    <li>Recalentar: airfryer 180&deg;C &times; 5 min (entran con la milanesa si hay espacio)</li>
+                </ul>
+            </div>
+            <div class="recipe-box" style="margin-top:10px">
+                <h4>Ensalada (1/2 plato = minimo 150g fresca)</h4>
+                <ul>
+                    <li>Tus 4 vegetales: <strong>tomate cherry, lechuga, espinaca, zanahoria</strong></li>
+                    <li>Cada noche: mezclar en un plato (~150g total), condimentar con <strong>1 cdita aceite oliva + limon/vinagre/aceto</strong></li>
+                </ul>
+            </div>
+            <div class="recipe-box" style="margin-top:10px;border-left:3px solid var(--green)">
+                <h4 style="color:var(--green)">Preparacion y conservacion de cada vegetal</h4>
+                <ul>
+                    <li style="padding-bottom:10px"><strong style="color:var(--green)">LECHUGA:</strong> Separar hoja por hoja. Remojar en agua fria con <strong>unas gotas de lavandina por 10 min</strong>, enjuagar bien con agua limpia. Ahora lo clave: <strong>secar MUY bien</strong> (centrifuga de ensalada o sacudir y secar con papel, hoja por hoja). En el tupper: <strong>papel de cocina ABAJO (1-2 hojas), lechuga arriba, papel de cocina ARRIBA (1-2 hojas), tapa.</strong> El papel de abajo absorbe los jugos que caen, el de arriba absorbe la condensacion. <strong>Cambiar el papel cada 2 dias</strong> &mdash; si esta humedo al tacto, ya no sirve. Dura <strong>5-7 dias</strong> crujiente.</li>
+                    <li style="padding-bottom:10px"><strong style="color:var(--green)">ESPINACA:</strong> Mismo proceso: remojar en agua con <strong>gotas de lavandina por 10 min</strong>, enjuagar bien. <strong>Secar con mucho cuidado</strong> (es mas fragil que la lechuga, no refregar). Centrifuga suave o sobre papel de cocina. En el tupper: <strong>papel ABAJO, espinaca, papel ARRIBA, tapa.</strong> Misma logica que la lechuga. <strong>Sacar hojas amarillas o blandas al toque</strong> (contagian al resto). Dura <strong>4-5 dias</strong>.</li>
+                    <li style="padding-bottom:10px"><strong style="color:var(--green)">TOMATE CHERRY:</strong> Van en la <strong>heladera</strong> (los cherry aguantan bien el frio, a diferencia del tomate comun). Guardar en tupper con <strong>1 papel de cocina en el fondo</strong> (absorbe condensacion), sin tapa o con tapa apenas abierta para que respiren. <strong>NO lavar hasta el momento de comer.</strong> Enteros duran <strong>7-10 dias</strong>. Solo cortar al servir.</li>
+                    <li><strong style="color:var(--green)">ZANAHORIA:</strong> Pelar y cortar en bastones o rodajas el domingo. Guardar <strong>sumergidas en agua fria</strong> dentro de un tupper cerrado en la heladera. <strong>Cambiar el agua cada 2-3 dias.</strong> Se mantienen firmes y crujientes hasta <strong>10-14 dias</strong>. Es el vegetal que mejor se conserva pre-cortado.</li>
+                </ul>
+            </div>
+            <div class="warn" style="margin-top:10px">
+                <h4>&#x26A0; Regla milanesa: carbos a la MITAD, no eliminados</h4>
+                <p>El MASTERPLAN dice: <em>"Si se elije milanesa, se reducen a la mitad los carbohidratos."</em> El empanado aporta carbohidratos (~20-35g), por eso se reduce la porcion de carbs aparte. Pero <strong>si necesitas la mitad de los carbos ademas del empanado</strong>. Opciones equivalentes:</p>
+                <ul>
+                    <li><strong>100g papa al horno</strong> (la opcion default &mdash; mitad de 200g)</li>
+                    <li>25g arroz integral crudo (~80g cocido &mdash; mitad de 50g)</li>
+                    <li>30g fideos crudo (mitad de 60g)</li>
+                    <li>50g legumbres cocidas + 25g arroz cocido</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== BATCH COOKING ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--red-d);color:var(--red)">&#x1F525;</div>
+        <div><h2>Batch Cooking Domingo</h2><div class="sub">Mismo procedimiento todas las semanas. ~2 horas.</div></div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--yellow)">
+        <h3>&#x1F95E; Tostadas Francesas &times;21 rebanadas <span class="batch-tag" style="background:var(--yellow-d);color:var(--yellow)">7 porciones de 3</span></h3>
+        <div class="recipe-box">
+            <h4>Ingredientes batch (receta exacta del nutricionista &times;7)</h4>
+            <ul>
+                <li><strong>7 huevos + 7 claras</strong> (comprar claras sueltas o usar 7 huevos extra y guardar yemas)</li>
+                <li><strong>21 rebanadas pan integral</strong> (~2 paquetes, 525g total)</li>
+                <li><strong>14 cdas leche proteica o bebida vegetal</strong> (210ml)</li>
+                <li><strong>3.5 scoops proteina en polvo</strong> (105g) &mdash; OBLIGATORIO</li>
+                <li>Canela, vainilla, edulcorante al gusto</li>
+            </ul>
+            <h4 style="margin-top:12px">Preparacion</h4>
+            <ol>
+                <li>Batir toda la mezcla en un bowl grande: <strong>7 huevos + 7 claras + 210ml leche proteica + 105g proteina en polvo</strong> + canela + vainilla + edulcorante</li>
+                <li><strong>Opcion horno (mas rapido):</strong> colocar las 21 rebanadas remojadas en 2-3 bandejas con papel manteca. Horno 200&deg;C por 12 min, dar vuelta, 5 min mas</li>
+                <li><strong>Opcion sarten:</strong> cocinar de a 2-3 en sarten antiadherente a fuego bajo, vuelta y vuelta. Cocinar junto con toda la mezcla restante (no desperdiciarla)</li>
+                <li>Dejar enfriar. Apilar de a 3 (1 porcion) con film entre cada grupo de 3</li>
+                <li>Freezer. <strong>Duran 3 semanas</strong></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--green)">
+        <h3>&#x1F969; Carne + Verduras <span class="batch-tag" style="background:var(--green-d);color:var(--green)">7 tuppers</span></h3>
+        <div class="recipe-box">
+            <h4>Ingredientes batch</h4>
+            <ul>
+                <li><strong>1.4 kg bife de carne magra</strong> (7 piezas de 200g)</li>
+                <li><strong>Verduras para la semana:</strong> 4 zucchinis + 4 zanahorias + 3 morrones + 3 cebollas (cortados en trozos)</li>
+                <li>Sal, pimienta, ajo en polvo, pimenton, oregano</li>
+                <li>1 cebolla grande (para el fondo de la olla)</li>
+                <li>500ml agua o caldo (para olla a presion)</li>
+            </ul>
+            <h4 style="margin-top:12px">Preparacion (olla a presion + horno en paralelo)</h4>
+            <ol>
+                <li>Condimentar los 7 bifes con sal, pimienta, ajo en polvo, pimenton, oregano</li>
+                <li><strong>Carne a la olla a presion:</strong> poner cebolla en rodajas en el fondo, bifes encima, 500ml agua/caldo. <strong>20-25 min desde que toma presion, dejar despresurizar sola</strong></li>
+                <li><strong>Verduras al horno:</strong> distribuir en bandeja grande. <strong>Horno 200&deg;C por 25-30 min</strong> (van en paralelo con la olla)</li>
+                <li>Dejar enfriar. Armar 7 tuppers: <strong>~140g carne cocida + 2-3 cdas jugo + ~150g verduras cocidas = ~300-320g por tupper</strong></li>
+                <li>3-4 a la heladera (Lunes-Jueves), resto al freezer</li>
+            </ol>
+        </div>
+        <div class="warn green" style="margin-top:10px">
+            <h4>&#x1F4A1; Por que olla a presion?</h4>
+            <p>La carne al horno se seca al recalentar. En olla a presion las fibras se ablandan con el vapor y la carne queda jugosa incluso despues de 3 dias en la heladera. El jugo de coccion en el tupper la mantiene hidratada al recalentar.</p>
+            <p style="margin-top:6px"><strong>La cebolla en el fondo</strong> evita que la carne toque directo el metal y se pegue o queme. Con 500ml de liquido y la olla sellada, el agua no se evapora &mdash; genera vapor, presuriza, y cocina parejo sin riesgo de que se seque el fondo.</p>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--purple)">
+        <h3>&#x1F414; Milanesas de Pollo (CRUDAS) <span class="batch-tag" style="background:var(--purple-d);color:var(--purple)">7 porciones</span></h3>
+        <div class="recipe-box">
+            <h4>Ingredientes batch</h4>
+            <ul>
+                <li><strong>1.4 kg suprema de pollo</strong> (7 &times; 200g crudo)</li>
+                <li><strong>3 huevos</strong> batidos (para empanar)</li>
+                <li><strong>Pan rallado integral</strong> ~200g + pimenton + ajo en polvo + oregano + sal</li>
+            </ul>
+            <h4 style="margin-top:12px">Preparacion</h4>
+            <ol>
+                <li>Cortar cada suprema en 2 bifes finos (o aplanar con martillo)</li>
+                <li>Pasar por huevo, luego por pan rallado condimentado</li>
+                <li>Colocar en bandejas/tablas con papel film entre capas</li>
+                <li><strong>Congelar CRUDAS sin cocinar</strong></li>
+                <li>Duran <strong>3 meses</strong> en freezer</li>
+            </ol>
+        </div>
+        <div class="warn green" style="margin-top:10px">
+            <h4>Por que congelar crudas?</h4>
+            <p>Las milanesas salen mucho mejor si se cocinan frescas desde congelado. Airfryer 200&deg;C x 12-15 min = crocantes afuera, jugosas adentro. Si las cocinas y luego recalentas pierden textura. <strong>Cada milanesa cocida pesa ~190g</strong> (el empanado compensa la perdida de humedad).</p>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--cyan)">
+        <h3>&#x1F954; Papas al Horno <span class="batch-tag" style="background:var(--cyan-d);color:var(--cyan)">7 &times; 100g crudo = ~75g cocido</span></h3>
+        <div class="recipe-box">
+            <h4>Preparacion</h4>
+            <ol>
+                <li><strong>700g de papa cruda</strong> cortada en cubos o wedges con cascara</li>
+                <li>Condimentar: pimenton, ajo en polvo, oregano</li>
+                <li>Horno 200&deg;C &times; 25 min (van en la misma bandeja que las verduras)</li>
+                <li>Porcionar en <strong>bolsas de ~75g cocida</strong> (700g crudo rinde ~525g cocido total). Freezer</li>
+                <li>Recalentar en airfryer 180&deg;C x 5 min junto con las milanesas</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--orange)">
+        <h3>&#x1F963; Yogur Casero <span class="batch-tag" style="background:var(--orange-d);color:var(--orange)">2 litros = 10 dias</span></h3>
+        <div class="recipe-box">
+            <h4>Yogurtera &mdash; tu receta</h4>
+            <ol>
+                <li><strong>2 litros de leche descremada + 100g de yogur natural</strong> de almacen como starter</li>
+                <li>Mezclar bien la leche con el yogur. Volcar en la yogurtera</li>
+                <li>Yogurtera segun instrucciones (8-12 horas)</li>
+                <li>Guardar en heladera. Dura 7-10 dias</li>
+                <li>2 litros = <strong>10 porciones de 200ml</strong> (cubre toda la semana + 3 dias extra)</li>
+                <li>Con 1 batch el domingo te alcanza para toda la semana</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--green)">
+        <h3>&#x1F353; Frutas Congeladas para Merienda <span class="batch-tag" style="background:var(--green-d);color:var(--green)">Freezer 2-3 meses</span></h3>
+        <div class="recipe-box">
+            <h4>Preparacion &mdash; porciones de 80-100g listas para el yogur bowl</h4>
+            <ol>
+                <li>Lavar y secar bien toda la fruta</li>
+                <li>Cortar en trozos del tamanio de un bocado (frutillas en mitades, banana en rodajas, manzana/pera en cubos, durazno en gajos)</li>
+                <li><strong>Congelar en bandeja primero (IQF):</strong> distribuir los trozos en una bandeja/placa <strong>sin que se toquen</strong>, meter al freezer 2-3 horas hasta que esten duros</li>
+                <li>Una vez congelados, pasar a <strong>bolsas con cierre o tuppers</strong> porcionados en bolsitas de ~100g</li>
+                <li>Sacar del freezer <strong>5-10 min antes</strong> de armar el bowl (que se ablanden un poco, no totalmente)</li>
+            </ol>
+        </div>
+        <div class="recipe-box" style="margin-top:10px;border-left:3px solid var(--green)">
+            <h4 style="color:var(--green)">Que frutas congelan mejor</h4>
+            <ul>
+                <li><strong style="color:var(--green)">FRUTILLAS:</strong> Excelentes congeladas. Cortar en mitades. Al descongelar quedan un poco mas blandas pero perfectas para el bowl. Duran <strong>3 meses</strong></li>
+                <li><strong style="color:var(--green)">BANANA:</strong> Pelar ANTES de congelar, cortar en rodajas de 1cm. Quedan cremosas, ideales para mezclar con yogur. Tip: si oscurecen, rociar con gotas de limon antes de congelar. Duran <strong>2-3 meses</strong></li>
+                <li><strong style="color:var(--green)">ARANDANOS:</strong> Se congelan enteros, no hace falta cortar. Mantienen muy buena textura. Duran <strong>3+ meses</strong></li>
+                <li><strong style="color:var(--green)">DURAZNO:</strong> Pelar, cortar en gajos. Rociar con gotas de limon para que no oscurezcan. Duran <strong>3 meses</strong></li>
+                <li><strong style="color:var(--green)">MANGO:</strong> Pelar, cortar en cubos. Queda excelente semi-congelado en el bowl. Duran <strong>3 meses</strong></li>
+            </ul>
+        </div>
+        <div class="warn" style="margin-top:10px">
+            <h4>&#x26A0; Frutas que NO conviene congelar para bowl</h4>
+            <ul>
+                <li><strong>Manzana y pera:</strong> quedan harinosas y blandas al descongelar. Mejor frescas</li>
+                <li><strong>Sandia y melon:</strong> se deshacen completamente. Solo sirven para licuados</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="batch-card" style="border-left:3px solid var(--green)">
+        <h3>&#x1F96C; Ensalada &mdash; Preparacion Domingo <span class="batch-tag" style="background:var(--green-d);color:var(--green)">Heladera 5-7 dias</span></h3>
+        <div class="recipe-box">
+            <h4>Tus 4 vegetales &mdash; resumen rapido</h4>
+            <ul>
+                <li><strong>Zanahoria:</strong> pelar, cortar en bastones, guardar <strong>sumergida en agua fria</strong> en tupper cerrado. Dura 10-14 dias</li>
+                <li><strong>Lechuga:</strong> lavar con lavandina, enjuagar, <strong>secar MUY bien</strong>, tupper con <strong>papel ABAJO + ARRIBA</strong>. Cambiar papel cada 2 dias. Dura 5-7 dias</li>
+                <li><strong>Espinaca:</strong> lavar con lavandina, enjuagar, secar con cuidado, tupper con <strong>papel ABAJO + ARRIBA</strong>. Sacar hojas feas al toque. Dura 4-5 dias</li>
+                <li><strong>Tomate cherry:</strong> heladera en tupper con <strong>papel en el fondo</strong>, sin tapa o tapa abierta. <strong>NO lavar ni cortar</strong> hasta servir. Dura 7-10 dias</li>
+            </ul>
+        </div>
+        <div class="warn green" style="margin-top:10px">
+            <h4>&#x1F4A1; Regla de oro: humedad = enemigo</h4>
+            <p>Las hojas verdes se ponen blandas por el agua. El papel de cocina absorbe la humedad &mdash; pero hay que <strong>cambiarlo cada 2 dias</strong> porque se empapa. Si el papel esta mojado al tacto, ya no sirve.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ====== RUTINA DIARIA ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--purple-d);color:var(--purple)">&#x23F0;</div>
+        <div><h2>Tu Rutina Diaria</h2><div class="sub">Lo mismo todos los dias. Menos de 5 minutos de prep total.</div></div>
+    </div>
+
+    <table class="tbl">
+        <thead><tr><th>Comida</th><th>Que hacer</th><th>Tiempo</th></tr></thead>
+        <tbody>
+            <tr>
+                <td class="fn" style="color:var(--yellow)">&#x2600; Desayuno</td>
+                <td>Sacar 3 tostadas francesas del freezer &rarr; <strong>airfryer 170&deg;C x 4 min</strong>. Servir con fruta fresca (80-100g) + 2 cditas pasta de mani. Listo.</td>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:600">4 min</td>
+            </tr>
+            <tr>
+                <td class="fn" style="color:var(--green)">&#x1F957; Almuerzo</td>
+                <td>Sacar tupper de carne+verduras de la heladera &rarr; agregar 1-2 cdas de agua, tapar, <strong>micro 3 min</strong>. Agregar 1 cdita aceite oliva. Vaso de agua.</td>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:600">3 min</td>
+            </tr>
+            <tr>
+                <td class="fn" style="color:var(--orange)">&#x1F963; Merienda</td>
+                <td>Bowl: 200ml yogur + 30g avena + 1/2 scoop prote + 10g pasta mani + fruta troceada + edulcorante. Mezclar.</td>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:600">2 min</td>
+            </tr>
+            <tr>
+                <td class="fn" style="color:var(--purple)">&#x1F319; Cena</td>
+                <td>Milanesas congeladas + papas congeladas &rarr; <strong>airfryer 200&deg;C x 12-15 min</strong>. Mientras, armar ensalada + aceite.</td>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:600">5 min</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="warn blue" style="margin-top:16px">
+        <h4>&#x1F3CB; Dias de gym</h4>
+        <p>Comer la merienda (yogur bowl) <strong>75-90 minutos antes de entrenar</strong>. El resto igual. La cena es post-entreno.</p>
+    </div>
+</section>
+
+<!-- ====== DOMINGO MINUTO A MINUTO ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--orange-d);color:var(--orange)">&#x1F4C5;</div>
+        <div><h2>Domingo: Minuto a Minuto</h2><div class="sub">~2 horas. Horno grande + sarten/airfryer en paralelo.</div></div>
+    </div>
+
+    <div class="warn blue" style="margin-bottom:20px">
+        <h4>&#x1F4A1; Sabado a la noche</h4>
+        <p>Sacar la carne del freezer a la heladera si la compraste congelada. Nada mas.</p>
+    </div>
+
+    <div class="timeline">
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--red-d);color:var(--red)">0</div>
+            <div class="tl-time">0:00 &mdash; Prender horno 200&deg;C + olla a presion</div>
+            <div class="tl-title">Armar todo en paralelo</div>
+            <div class="tl-tags">
+                <span class="tl-tag" style="background:var(--red-d);color:var(--red)">Olla a presion: cebolla en el fondo + 7 bifes + 500ml agua/caldo</span>
+                <span class="tl-tag" style="background:var(--green-d);color:var(--green)">Bandeja horno: verduras cortadas + 700g papas en cubos</span>
+                <span class="tl-tag" style="background:var(--yellow-d);color:var(--yellow)">Bowl: batir 7 huevos + 7 claras + 210ml leche proteica + 105g prote</span>
+            </div>
+        </div>
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--orange-d);color:var(--orange)">10</div>
+            <div class="tl-time">0:10 &mdash; Verduras + papas al horno, olla en marcha</div>
+            <div class="tl-title">Mientras esperamos: empanar milanesas</div>
+            <div class="tl-tags">
+                <span class="tl-tag" style="background:var(--red-d);color:var(--red)">Olla a presion: carne 20-25 min desde presion</span>
+                <span class="tl-tag" style="background:var(--green-d);color:var(--green)">Horno: verduras + papas (25-30 min)</span>
+                <span class="tl-tag" style="background:var(--purple-d);color:var(--purple)">Mesada: cortar 1.4kg supremas en bifes finos, empanar las 14 milanesas</span>
+            </div>
+        </div>
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--yellow-d);color:var(--yellow)">40</div>
+            <div class="tl-time">0:40 &mdash; Sacar verduras del horno + abrir olla</div>
+            <div class="tl-title">Cocinar tostadas francesas</div>
+            <div class="tl-tags">
+                <span class="tl-tag" style="background:var(--yellow-d);color:var(--yellow)">Horno: meter 21 rebanadas remojadas en 2-3 bandejas (12+5 min)</span>
+                <span class="tl-tag" style="background:var(--green-d);color:var(--green)">Mesada: porcionar carne (con jugo) + verduras en 7 tuppers, papas en 7 bolsitas</span>
+            </div>
+        </div>
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--purple-d);color:var(--purple)">60</div>
+            <div class="tl-time">1:00 &mdash; Tostadas listas</div>
+            <div class="tl-title">Apilar milanesas en freezer + ensaladas</div>
+            <div class="tl-tags">
+                <span class="tl-tag" style="background:var(--purple-d);color:var(--purple)">Freezer: apilar milanesas crudas con film entre capas</span>
+                <span class="tl-tag" style="background:var(--yellow-d);color:var(--yellow)">Freezer: apilar tostadas de a 3 con film</span>
+                <span class="tl-tag" style="background:var(--green-d);color:var(--green)">Heladera: zanahoria en agua, lechuga seca en papel, espinaca sin lavar en tupper</span>
+            </div>
+        </div>
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--orange-d);color:var(--orange)">80</div>
+            <div class="tl-time">1:20 &mdash; Yogurtera</div>
+            <div class="tl-title">Poner yogur si hace falta</div>
+            <div class="tl-tags">
+                <span class="tl-tag" style="background:var(--orange-d);color:var(--orange)">Yogurtera: 1 litro leche desc + starter (8-12hs, trabaja sola)</span>
+                <span class="tl-tag" style="background:var(--cyan-d);color:var(--cyan)">Etiquetar tuppers + bolsas con fecha</span>
+            </div>
+        </div>
+        <div class="tl-item">
+            <div class="tl-dot" style="background:var(--green);color:var(--bg)">&#x2713;</div>
+            <div class="tl-time" style="color:var(--green)">1:30 - 2:00</div>
+            <div class="tl-title" style="font-size:1.05rem;color:var(--green)">Limpiar y listo. Semana resuelta.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== LISTA DE COMPRAS ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--green-d);color:var(--green)">&#x1F6D2;</div>
+        <div><h2>Lista de Compras</h2><div class="sub">Siempre lo mismo. Imprimila y llevala al super.</div></div>
+    </div>
+    <div class="shop-grid">
+        <div class="shop">
+            <h3 style="color:var(--red)">&#x1F969; Proteinas</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 1.4 kg bife de carne magra</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 1.4 kg suprema de pollo</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 17 huevos (7 desayuno + 7 claras + 3 empanado) o 10 huevos + 1 pack claras</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Pan rallado integral (~200g)</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--yellow)">&#x1F35E; Carbos y Cereal</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 2 paquetes pan integral o de semillas (21 rebanadas = 525g)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 700g papas</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 250g avena en copos</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--green)">&#x1F96C; Verduras (almuerzo: horno)</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Zucchini &times;4</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Zanahorias &times;3 (para horno)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Morrones &times;3</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Cebollas &times;4 (3 horno + 1 fondo olla)</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--green)">&#x1F96C; Ensalada (cena: fresca)</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Tomates cherry 2 bandejas</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Lechuga &times;1 grande</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Espinaca 1 atado o bolsa</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Zanahorias &times;3 (para ensalada)</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--orange)">&#x1F34E; Frutas</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> 7 frutas para desayuno (frutillas o banana, 80-100g c/u)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Frutas para merienda: frescas semanales O comprar en cantidad y congelar (ver guia IQF)</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--purple)">&#x1F3EA; Despensa</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Aceite de oliva</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Aceite en spray (para milanesas en airfryer)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Leche descremada (2L para yogur)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Leche proteica o bebida vegetal (210ml/semana para tostadas)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Yogur natural de almacen (100g como starter)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Proteina en polvo Star</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Pasta de mani</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Canela + esencia vainilla + edulcorante</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Papel de cocina (para conservar lechuga y espinaca)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Lavandina (gotas para lavar verduras)</div>
+        </div>
+        <div class="shop">
+            <h3 style="color:var(--cyan)">&#x1F48A; Suplementos</h3>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Creatina Star (8g/dia con comida principal)</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Vit D3 y K2 Natier</div>
+            <div class="si" onclick="tg(this)"><div class="sc"></div> Omega 3 Innova Naturals (2 caps/dia)</div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== PESOS CRUDO vs COCIDO ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--yellow-d);color:var(--yellow)">&#x2696;</div>
+        <div><h2>Pesos: Crudo vs Cocido</h2><div class="sub">Referencia rapida para armar tuppers con balanza.</div></div>
+    </div>
+
+    <div class="warn blue" style="margin-bottom:16px">
+        <h4>&#x1F4A1; El MASTERPLAN indica todo en CRUDO. Esta tabla te ayuda a pesar en cocido al armar tuppers.</h4>
+    </div>
+
+    <table class="tbl">
+        <thead><tr><th>Ingrediente</th><th>Crudo</th><th>Cocido</th><th>Cambio</th></tr></thead>
+        <tbody>
+            <tr><td class="fn">Bife de carne (olla a presion)</td><td>200g</td><td style="font-weight:600;color:var(--green)">~140g</td><td style="color:var(--red)">-30%</td></tr>
+            <tr><td class="fn">Suprema de pollo (sin empanar)</td><td>200g</td><td style="font-weight:600;color:var(--green)">~150g</td><td style="color:var(--red)">-25%</td></tr>
+            <tr><td class="fn">Milanesa de pollo (airfryer)</td><td>200g + empanado</td><td style="font-weight:600;color:var(--green)">~190g</td><td style="color:var(--tm)">-5% neto</td></tr>
+            <tr><td class="fn">Papa al horno</td><td>100g</td><td style="font-weight:600;color:var(--green)">~75g</td><td style="color:var(--red)">-25%</td></tr>
+            <tr><td class="fn">Verduras asadas almuerzo (mix)</td><td>min 200g</td><td style="font-weight:600;color:var(--green)">~150g</td><td style="color:var(--red)">-35%</td></tr>
+            <tr><td class="fn">Ensalada fresca cena</td><td colspan="2" style="font-weight:600;color:var(--green)">min 150g (no cambia, es cruda)</td><td style="color:var(--tm)">0%</td></tr>
+            <tr><td class="fn">Tostada francesa (3 reb + mezcla)</td><td>75g pan</td><td style="font-weight:600;color:var(--green)">~100g</td><td style="color:var(--blue)">+33%</td></tr>
+            <tr><td class="fn">Arroz integral</td><td>25g (mitad)</td><td style="font-weight:600;color:var(--green)">~65g</td><td style="color:var(--blue)">+160%</td></tr>
+            <tr><td class="fn">Fideos</td><td>30g (mitad)</td><td style="font-weight:600;color:var(--green)">~70g</td><td style="color:var(--blue)">+130%</td></tr>
+        </tbody>
+    </table>
+
+    <div class="warn green" style="margin-top:16px">
+        <h4>&#x1F4E6; Peso por tupper armado</h4>
+        <ul>
+            <li><strong>Tupper almuerzo:</strong> ~140g carne + ~150g verduras + jugo = <strong>~300-320g</strong></li>
+            <li><strong>Bolsa papas cena:</strong> <strong>~75g</strong> por bolsita</li>
+            <li><strong>Porcion tostadas (x3):</strong> <strong>~100g</strong> el grupo de 3 tostadas</li>
+            <li><strong>Milanesa cocida:</strong> <strong>~190g</strong> la pieza</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ====== FREEZER GUIDE ====== -->
+<section class="section">
+    <div class="sh">
+        <div class="sh-icon" style="background:var(--cyan-d);color:var(--cyan)">&#x2744;</div>
+        <div><h2>Freezer y Recalentado</h2></div>
+    </div>
+    <table class="tbl">
+        <thead><tr><th>Preparacion</th><th>Freezer</th><th>Recalentar</th></tr></thead>
+        <tbody>
+            <tr><td class="fn">Tostadas francesas (&times;3)</td><td>3 semanas</td><td>Airfryer 170&deg;C &times; 3-4 min</td></tr>
+            <tr><td class="fn">Carne + verduras (tupper)</td><td>3 meses</td><td>Agregar 1-2 cdas agua, tapar, micro 3 min</td></tr>
+            <tr><td class="fn">Milanesas crudas (&times;2)</td><td>3 meses</td><td>Airfryer 200&deg;C &times; 12-15 min <strong>desde congelado</strong></td></tr>
+            <tr><td class="fn">Papas al horno (100g)</td><td>2 meses</td><td>Airfryer 180&deg;C &times; 5 min</td></tr>
+            <tr><td class="fn">Yogur casero</td><td>No congelar</td><td>Heladera, 7-10 dias fresco</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ====== RECORDATORIOS ====== -->
+<section class="section">
+    <div class="warn red">
+        <h4 style="color:var(--red)">&#x2757; MASTERPLAN &mdash; Siempre respetar</h4>
+        <ul>
+            <li><strong>Almuerzo SIN carbohidratos.</strong> Solo proteina + vegetales + aceite.</li>
+            <li><strong>Cena CON carbohidratos</strong> (reducidos a la mitad por milanesa).</li>
+            <li><strong>1 cdita aceite oliva</strong> por almuerzo y por cena. No mas.</li>
+            <li><strong>Frutas:</strong> 1 en desayuno (80-100g, fresca) + 1 en merienda (80-100g, fresca o congelada IQF).</li>
+            <li><strong>Creatina 8g</strong> diluida en 300ml agua, con almuerzo o cena.</li>
+            <li><strong>Omega 3:</strong> 2 caps con comida principal.</li>
+            <li><strong>Agua:</strong> 8 vasos/dia (2.5L). 500ml antes, durante y despues de entrenar.</li>
+            <li><strong>Merienda pre-entreno:</strong> 75-90 min antes del gym.</li>
+            <li>Coccion: horno, airfryer, plancha. <strong>Nunca freir.</strong></li>
+        </ul>
+    </div>
+</section>
+
+</div>
+
+<footer class="footer">
+    <p>Basado en el Plan Alimentario de <strong>Nut. Segatore Emanuel</strong> &mdash; Cada porcion verificada contra el MASTERPLAN</p>
+    <p style="margin-top:4px">4 comidas, 0 colaciones, mismo menu todos los dias.</p>
+</footer>
+
+<script>
+function tg(el){const c=el.querySelector('.sc');c.classList.toggle('ck');el.classList.toggle('ck-item')}
+</script>
+</body>
+</html>
