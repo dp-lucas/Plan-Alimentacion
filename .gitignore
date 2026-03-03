@@ -8,6 +8,9 @@ infusions_images/
 # Markdown draft
 BATCH-COOKING-PLAN.md
 
+# Claude Code config
+.claude/
+
 # OS files
 Thumbs.db
 .DS_Store
