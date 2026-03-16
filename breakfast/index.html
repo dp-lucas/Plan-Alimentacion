@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desayuno — Detalle Nutricional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f9fb;--s1:#ffffff;--s2:#f1f3f5;--s3:#e9ecef;--brd:#dee2e6;
+  --t:#1a1d27;--td:#495057;--tm:#868e96;
+  --yellow:#d97706;--yellow-d:rgba(217,119,6,.08);
+  --green:#10b981;--green-d:rgba(16,185,129,.08);
+  --blue:#3b82f6;--blue-d:rgba(59,130,246,.08);
+  --purple:#8b5cf6;--purple-d:rgba(139,92,246,.08);
+  --red:#ef4444;--red-d:rgba(239,68,68,.08);
+  --cyan:#0891b2;--cyan-d:rgba(8,145,178,.08);
+  --orange:#f97316;--orange-d:rgba(249,115,22,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);line-height:1.6;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1d27 0%,#2d1f0e 50%,#1a1d27 100%);padding:48px 24px 0;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(217,119,6,.15) 0%,transparent 70%)}
+.hero-content{position:relative;z-index:1;max-width:900px;margin:0 auto}
+.hero h1{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.hero .subtitle{color:rgba(255,255,255,.6);font-size:.9rem;font-weight:400;margin-bottom:24px}
+.hero .date-badge{display:inline-block;background:rgba(217,119,6,.15);border:1px solid rgba(217,119,6,.3);color:#fbbf24;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:600;letter-spacing:.04em;margin-bottom:28px}
+
+/* PLATE IMAGE */
+.plate-wrap{position:relative;max-width:520px;margin:0 auto;padding:0 16px}
+.plate-frame{border-radius:20px 20px 0 0;overflow:hidden;box-shadow:0 -8px 50px rgba(217,119,6,.3),0 0 80px rgba(217,119,6,.1);border:3px solid rgba(217,119,6,.25);border-bottom:none}
+.plate-img{width:100%;height:auto;display:block}
+
+/* MAIN */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px 60px}
+
+/* SUMMARY STRIP */
+.summary-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--s1);border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin:-2px 0 32px;overflow:hidden;border:1px solid var(--brd)}
+.summary-item{padding:20px 12px;text-align:center;border-right:1px solid var(--brd)}
+.summary-item:last-child{border-right:none}
+.summary-item .label{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tm);margin-bottom:4px}
+.summary-item .value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+.summary-item .unit{font-size:.7rem;font-weight:500;color:var(--td)}
+.summary-item.kcal .value{color:var(--yellow)}
+.summary-item.prot .value{color:var(--red)}
+.summary-item.carb .value{color:var(--blue)}
+.summary-item.fat .value{color:var(--orange)}
+.summary-item.fib .value{color:var(--green)}
+
+/* MACRO RING */
+.macro-visual{display:flex;align-items:center;justify-content:center;gap:32px;background:var(--s1);border-radius:16px;padding:28px 24px;margin-bottom:28px;box-shadow:0 2px 16px rgba(0,0,0,.06);border:1px solid var(--brd)}
+.ring-wrap{position:relative;width:160px;height:160px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center .num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;color:var(--yellow)}
+.ring-center .kcl{font-size:.65rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.06em}
+.macro-legend{display:flex;flex-direction:column;gap:14px}
+.legend-row{display:flex;align-items:center;gap:10px}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.legend-info .leg-label{font-size:.75rem;color:var(--tm);font-weight:500}
+.legend-info .leg-value{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700}
+.legend-info .leg-pct{font-size:.7rem;color:var(--td);font-weight:500;margin-left:4px}
+
+/* SECTION HEADINGS */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:36px}
+.sh h2{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.sh .line{flex:1;height:1px;background:var(--brd)}
+
+/* FOOD TABLE */
+.tbl-wrap{background:var(--s1);border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06);border:1px solid var(--brd);margin-bottom:28px}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--s2)}
+th{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tm);padding:12px 16px;text-align:left}
+th.r{text-align:right}
+td{padding:10px 16px;border-top:1px solid var(--brd);font-size:.88rem}
+td.r{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:.82rem}
+td.ingredient{font-weight:600}
+td .amt{color:var(--tm);font-weight:400;font-size:.78rem;margin-left:4px}
+tr.total-row{background:var(--yellow-d)}
+tr.total-row td{font-weight:700;border-top:2px solid var(--yellow)}
+tr.total-row td.r{font-weight:800}
+tr:not(.total-row):hover{background:var(--s2)}
+
+/* COLOR CODED VALUES */
+.v-kcal{color:var(--yellow)}.v-prot{color:var(--red)}.v-carb{color:var(--blue)}.v-fat{color:var(--orange)}.v-fib{color:var(--green)}
+
+/* INGREDIENT GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:28px}
+.gallery-item{background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.gallery-item:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.gallery-item img{width:100%;height:100px;object-fit:cover}
+.gallery-item .gi-name{padding:6px 10px;font-size:.7rem;font-weight:600;text-align:center;color:var(--td)}
+
+/* SUPPLEMENTS */
+.supp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.supp-card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:8px}
+.supp-card .sc-head{display:flex;align-items:center;gap:8px}
+.supp-card .sc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.supp-card .sc-name{font-weight:700;font-size:.88rem}
+.supp-card .sc-dose{font-size:.72rem;color:var(--tm);font-weight:500}
+.supp-card .sc-nutrients{display:flex;flex-direction:column;gap:3px}
+.supp-card .sc-row{display:flex;align-items:center;font-size:.75rem;gap:6px}
+.supp-card .sc-row .k{color:var(--td);flex:1}
+.supp-card .sc-row .v{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--t);text-align:right;white-space:nowrap}
+.supp-card .sc-row .pct{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:6px;white-space:nowrap;text-align:right;min-width:48px;display:inline-block}
+.pct.high{background:var(--green-d);color:var(--green)}
+.pct.mid{background:var(--blue-d);color:var(--blue)}
+.pct.low{background:var(--yellow-d);color:var(--yellow)}
+.pct.over{background:var(--orange-d);color:var(--orange)}
+.pct.na{background:var(--s2);color:var(--tm)}
+.supp-card .sc-ref{font-size:.62rem;color:var(--tm);margin-top:4px;padding-top:4px;border-top:1px dashed var(--brd);line-height:1.4}
+
+/* MICRONUTRIENT HIGHLIGHT BAR */
+.micro-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.micro-pill{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:10px 16px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:80px;box-shadow:0 1px 6px rgba(0,0,0,.03)}
+.micro-pill .mp-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.95rem;color:var(--t)}
+.micro-pill .mp-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tm)}
+
+/* BARS (horizontal stacked) */
+.bar-stack{height:28px;border-radius:14px;overflow:hidden;display:flex;margin-bottom:8px}
+.bar-seg{transition:width .5s ease}
+.bar-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--td);font-weight:500;margin-bottom:24px}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px;color:var(--tm);font-size:.72rem;border-top:1px solid var(--brd);margin-top:32px}
+
+/* PRINT */
+@media print{
+  body{background:#fff}
+  .hero{background:#1a1d27 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{padding:0 12px 24px}
+}
+
+/* MOBILE */
+@media(max-width:640px){
+  .hero{padding:28px 12px 0}
+  .hero h1{margin-bottom:2px}
+  .hero .subtitle{font-size:.8rem;margin-bottom:16px}
+  .hero .date-badge{margin-bottom:20px}
+  .plate-wrap{max-width:100%;padding:0 8px}
+  .plate-frame{border-radius:16px 16px 0 0}
+  .wrap{padding:0 14px 48px}
+  .summary-strip{grid-template-columns:repeat(3,1fr);margin-bottom:24px}
+  .summary-item{padding:14px 8px}
+  .summary-item:nth-child(3){border-right:none}
+  .summary-item:nth-child(1),.summary-item:nth-child(2),.summary-item:nth-child(3){border-bottom:1px solid var(--brd)}
+  .summary-item:nth-child(5){border-right:none}
+  .summary-item .value{font-size:1.3rem}
+  .summary-item .label{font-size:.6rem}
+  .macro-visual{flex-direction:column;gap:20px;padding:20px 16px}
+  .ring-wrap{width:140px;height:140px}
+  .ring-center .num{font-size:1.5rem}
+  .legend-info .leg-value{font-size:.9rem}
+  .sh{margin-top:28px;margin-bottom:12px}
+  .sh h2{font-size:1rem}
+  .bar-labels{font-size:.65rem;flex-wrap:wrap;gap:4px;justify-content:center}
+  .tbl-wrap{overflow-x:auto;margin-bottom:20px}
+  table{font-size:.78rem;min-width:600px}
+  th{padding:10px 8px;font-size:.6rem}
+  td{padding:8px;font-size:.78rem}
+  td .amt{font-size:.68rem}
+  .supp-grid{grid-template-columns:1fr;gap:10px}
+  .supp-card{padding:14px}
+  .micro-bar{gap:8px;justify-content:center}
+  .micro-pill{padding:8px 12px;min-width:70px}
+  .micro-pill .mp-val{font-size:.85rem}
+  .micro-pill .mp-label{font-size:.55rem}
+  .gallery{grid-template-columns:repeat(3,1fr);gap:8px}
+  .gallery-item img{height:80px}
+  .gallery-item .gi-name{font-size:.62rem;padding:4px 6px}
+  .footer{padding:20px 12px;font-size:.65rem}
+}
+
+/* SMALL MOBILE */
+@media(max-width:380px){
+  .hero{padding:20px 8px 0}
+  .plate-wrap{padding:0 4px}
+  .wrap{padding:0 10px 40px}
+  .summary-item .value{font-size:1.15rem}
+  .supp-card .sc-row{font-size:.7rem}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="date-badge">REPORTE NUTRICIONAL</div>
+    <h1>Desayuno</h1>
+    <p class="subtitle">Composición detallada de ingredientes, macronutrientes y suplementación</p>
+  </div>
+  <div class="plate-wrap">
+    <div class="plate-frame">
+      <img class="plate-img" src="plate.png" alt="Plato de desayuno — Pancakes proteicos con mantequilla de maní">
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="wrap">
+
+<!-- SUMMARY STRIP -->
+<div class="summary-strip">
+  <div class="summary-item kcal">
+    <div class="label">Calorías</div>
+    <div class="value">533</div>
+    <div class="unit">kcal</div>
+  </div>
+  <div class="summary-item prot">
+    <div class="label">Proteína</div>
+    <div class="value">35.5</div>
+    <div class="unit">gramos</div>
+  </div>
+  <div class="summary-item carb">
+    <div class="label">Carbohidratos</div>
+    <div class="value">60.3</div>
+    <div class="unit">gramos</div>
+  </div>
+  <div class="summary-item fat">
+    <div class="label">Grasas</div>
+    <div class="value">16.7</div>
+    <div class="unit">gramos</div>
+  </div>
+  <div class="summary-item fib">
+    <div class="label">Fibra</div>
+    <div class="value">8.2</div>
+    <div class="unit">gramos</div>
+  </div>
+</div>
+
+<!-- MACRO RING CHART -->
+<div class="macro-visual">
+  <div class="ring-wrap">
+    <svg viewBox="0 0 160 160" width="160" height="160">
+      <!-- Background ring -->
+      <circle cx="80" cy="80" r="64" fill="none" stroke="#e9ecef" stroke-width="16"/>
+      <!-- Fat: 26.8% → 0.268 * 402.1 = 107.8, offset starts after carbs -->
+      <circle cx="80" cy="80" r="64" fill="none" stroke="#f97316" stroke-width="16"
+        stroke-dasharray="107.8 294.3" stroke-dashoffset="-294.3" stroke-linecap="round"/>
+      <!-- Carbs: 45.2% → 0.452 * 402.1 = 181.7, offset starts after protein -->
+      <circle cx="80" cy="80" r="64" fill="none" stroke="#3b82f6" stroke-width="16"
+        stroke-dasharray="181.7 220.4" stroke-dashoffset="-112.6" stroke-linecap="round"/>
+      <!-- Protein: 28% → 0.28 * 402.1 = 112.6 -->
+      <circle cx="80" cy="80" r="64" fill="none" stroke="#ef4444" stroke-width="16"
+        stroke-dasharray="112.6 289.5" stroke-dashoffset="0" stroke-linecap="round"/>
+    </svg>
+    <div class="ring-center">
+      <span class="num">533</span>
+      <span class="kcl">kcal</span>
+    </div>
+  </div>
+  <div class="macro-legend">
+    <div class="legend-row">
+      <div class="legend-dot" style="background:#ef4444"></div>
+      <div class="legend-info">
+        <div class="leg-label">Proteína</div>
+        <div class="leg-value">35.5g <span class="leg-pct">27%</span></div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-dot" style="background:#3b82f6"></div>
+      <div class="legend-info">
+        <div class="leg-label">Carbohidratos</div>
+        <div class="leg-value">60.3g <span class="leg-pct">45%</span></div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-dot" style="background:#f97316"></div>
+      <div class="legend-info">
+        <div class="leg-label">Grasas</div>
+        <div class="leg-value">16.7g <span class="leg-pct">28%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STACKED BAR -->
+<div class="bar-stack">
+  <div class="bar-seg" style="width:27%;background:#ef4444"></div>
+  <div class="bar-seg" style="width:45%;background:#3b82f6"></div>
+  <div class="bar-seg" style="width:28%;background:#f97316"></div>
+</div>
+<div class="bar-labels">
+  <span>Proteína 27%</span>
+  <span>Carbohidratos 45%</span>
+  <span>Grasas 28%</span>
+</div>
+
+<!-- FOOD TABLE -->
+<div class="sh"><h2>Ingredientes y Macronutrientes</h2><div class="line"></div></div>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Ingrediente</th>
+      <th>Cantidad</th>
+      <th class="r">Kcal</th>
+      <th class="r">Prot (g)</th>
+      <th class="r">Carb (g)</th>
+      <th class="r">Grasas (g)</th>
+      <th class="r">Fibra (g)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="ingredient">Huevo entero</td>
+      <td>1 <span class="amt">(~50g)</span></td>
+      <td class="r v-kcal">72.0</td>
+      <td class="r v-prot">6.3</td>
+      <td class="r v-carb">0.4</td>
+      <td class="r v-fat">4.8</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Clara de huevo</td>
+      <td>1 <span class="amt">(~33g)</span></td>
+      <td class="r v-kcal">17.0</td>
+      <td class="r v-prot">3.6</td>
+      <td class="r v-carb">0.2</td>
+      <td class="r v-fat">0.1</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Yogurt</td>
+      <td>32g</td>
+      <td class="r v-kcal">26.1</td>
+      <td class="r v-prot">2.1</td>
+      <td class="r v-carb">2.2</td>
+      <td class="r v-fat">1.0</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Proteína en polvo</td>
+      <td>15g</td>
+      <td class="r v-kcal">63.5</td>
+      <td class="r v-prot">12.5</td>
+      <td class="r v-carb">1.3</td>
+      <td class="r v-fat">0.9</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Banana</td>
+      <td>80g</td>
+      <td class="r v-kcal">71.2</td>
+      <td class="r v-prot">0.9</td>
+      <td class="r v-carb">18.3</td>
+      <td class="r v-fat">0.3</td>
+      <td class="r v-fib">2.1</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Pan integral con salvado</td>
+      <td>3 rebanadas <span class="amt">(~75g)</span></td>
+      <td class="r v-kcal">171.8</td>
+      <td class="r v-prot">6.4</td>
+      <td class="r v-carb">28.5</td>
+      <td class="r v-fat">3.4</td>
+      <td class="r v-fib">5.3</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Leche en polvo</td>
+      <td>1 cdta <span class="amt">(~4g)</span></td>
+      <td class="r v-kcal">14.4</td>
+      <td class="r v-prot">1.3</td>
+      <td class="r v-carb">2.2</td>
+      <td class="r v-fat">0.0</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Miel</td>
+      <td>1 cdta <span class="amt">(~7g)</span></td>
+      <td class="r v-kcal">21.3</td>
+      <td class="r v-prot">0.0</td>
+      <td class="r v-carb">5.7</td>
+      <td class="r v-fat">0.0</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Pasta de maní</td>
+      <td>10g</td>
+      <td class="r v-kcal">58.5</td>
+      <td class="r v-prot">2.4</td>
+      <td class="r v-carb">1.5</td>
+      <td class="r v-fat">4.7</td>
+      <td class="r v-fib">0.8</td>
+    </tr>
+    <tr>
+      <td class="ingredient">Café negro</td>
+      <td>1 taza</td>
+      <td class="r v-kcal">2.0</td>
+      <td class="r v-prot">0.0</td>
+      <td class="r v-carb">0.0</td>
+      <td class="r v-fat">0.0</td>
+      <td class="r v-fib">0.0</td>
+    </tr>
+    <tr class="total-row">
+      <td colspan="2"><strong>TOTAL ALIMENTOS</strong></td>
+      <td class="r v-kcal">517.8</td>
+      <td class="r v-prot">35.5</td>
+      <td class="r v-carb">60.3</td>
+      <td class="r v-fat">15.2</td>
+      <td class="r v-fib">8.2</td>
+    </tr>
+    <tr style="background:var(--orange-d)">
+      <td colspan="2"><strong>+ Suplementos (Omega 3)</strong></td>
+      <td class="r v-kcal">15.0</td>
+      <td class="r">—</td>
+      <td class="r">—</td>
+      <td class="r v-fat">1.5</td>
+      <td class="r">—</td>
+    </tr>
+    <tr class="total-row" style="background:linear-gradient(90deg,var(--yellow-d),var(--orange-d))">
+      <td colspan="2"><strong>TOTAL DESAYUNO</strong></td>
+      <td class="r v-kcal" style="font-size:1rem">532.8</td>
+      <td class="r v-prot" style="font-size:1rem">35.5</td>
+      <td class="r v-carb" style="font-size:1rem">60.3</td>
+      <td class="r v-fat" style="font-size:1rem">16.7</td>
+      <td class="r v-fib" style="font-size:1rem">8.2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- SUPPLEMENTS -->
+<div class="sh"><h2>Suplementación</h2><div class="line"></div></div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+  <span style="background:var(--s2);border:1px solid var(--brd);border-radius:8px;padding:4px 12px;font-size:.7rem;font-weight:600;color:var(--td)">Hombre, 35 años</span>
+  <span style="background:var(--s2);border:1px solid var(--brd);border-radius:8px;padding:4px 12px;font-size:.7rem;font-weight:600;color:var(--td)">94 kg</span>
+  <span style="background:var(--s2);border:1px solid var(--brd);border-radius:8px;padding:4px 12px;font-size:.7rem;font-weight:600;color:var(--td)">177 cm</span>
+  <span style="background:var(--green-d);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:4px 12px;font-size:.65rem;font-weight:600;color:var(--green)">%VD = % del valor diario recomendado</span>
+</div>
+
+<div class="supp-grid">
+  <!-- Creatine -->
+  <div class="supp-card" style="border-top:3px solid var(--red)">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--red-d);color:var(--red)">💪</div>
+      <div>
+        <div class="sc-name">Creatina</div>
+        <div class="sc-dose">1 scoop (5g)</div>
+      </div>
+    </div>
+    <div class="sc-nutrients">
+      <div class="sc-row"><span class="k">Creatina monohidrato</span><span class="v">5g</span><span class="pct high">100%</span></div>
+    </div>
+    <div class="sc-ref">Ref: 3–5g/día dosis de mantenimiento recomendada (ISSN)</div>
+  </div>
+  <!-- Omega 3 -->
+  <div class="supp-card" style="border-top:3px solid var(--blue)">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--blue-d);color:var(--blue)">🐟</div>
+      <div>
+        <div class="sc-name">Omega 3</div>
+        <div class="sc-dose">1 softgel</div>
+      </div>
+    </div>
+    <div class="sc-nutrients">
+      <div class="sc-row"><span class="k">Aceite de pescado</span><span class="v">1300 mg</span><span class="pct na">—</span></div>
+      <div class="sc-row"><span class="k">Omega-3 total</span><span class="v">1180 mg</span><span class="pct high">118%</span></div>
+      <div class="sc-row"><span class="k">— EPA</span><span class="v">665 mg</span><span class="pct high">133%</span></div>
+      <div class="sc-row"><span class="k">— DHA</span><span class="v">445 mg</span><span class="pct high">89%</span></div>
+      <div class="sc-row"><span class="k">Vitamina D3</span><span class="v">1000 IU</span><span class="pct high">167%</span></div>
+      <div class="sc-row"><span class="k">Calorías</span><span class="v">15 kcal</span><span class="pct na">&lt;1%</span></div>
+      <div class="sc-row"><span class="k">Grasas totales</span><span class="v">1.5g</span><span class="pct low">2%</span></div>
+    </div>
+    <div class="sc-ref">Ref: EPA+DHA 500–1000mg/día (AHA). Vit D3 RDA 600 IU (IOM, hombres 19–50)</div>
+  </div>
+  <!-- Vitamin D3+K2 -->
+  <div class="supp-card" style="border-top:3px solid var(--yellow)">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--yellow-d);color:var(--yellow)">☀️</div>
+      <div>
+        <div class="sc-name">Vitamina D3 + K2</div>
+        <div class="sc-dose">1 softgel</div>
+      </div>
+    </div>
+    <div class="sc-nutrients">
+      <div class="sc-row"><span class="k">Vitamina D3</span><span class="v">5000 IU</span><span class="pct over">833%</span></div>
+      <div class="sc-row"><span class="k">Vitamina K2 (MK-7)</span><span class="v">100 mcg</span><span class="pct high">83%</span></div>
+    </div>
+    <div class="sc-ref">Ref: Vit D RDA 600 IU (IOM). Vit K AI 120 mcg (hombres adultos). D3 total con Omega: 6000 IU (1000%)</div>
+  </div>
+  <!-- Vitamin B Complex -->
+  <div class="supp-card" style="border-top:3px solid var(--green)">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--green-d);color:var(--green)">🧬</div>
+      <div>
+        <div class="sc-name">Complejo B</div>
+        <div class="sc-dose">2 softgels</div>
+      </div>
+    </div>
+    <div class="sc-nutrients">
+      <div class="sc-row"><span class="k">B1 (Tiamina)</span><span class="v">6 mg</span><span class="pct over">500%</span></div>
+      <div class="sc-row"><span class="k">B2 (Riboflavina)</span><span class="v">6.5 mg</span><span class="pct over">500%</span></div>
+      <div class="sc-row"><span class="k">B3 (Niacina)</span><span class="v">80 mg</span><span class="pct over">500%</span></div>
+      <div class="sc-row"><span class="k">B6 (Piridoxina)</span><span class="v">8.5 mg</span><span class="pct over">654%</span></div>
+      <div class="sc-row"><span class="k">Folato</span><span class="v">680 mcg</span><span class="pct high">170%</span></div>
+      <div class="sc-row"><span class="k">B12</span><span class="v">12 mcg</span><span class="pct over">500%</span></div>
+      <div class="sc-row"><span class="k">Biotina</span><span class="v">300 mcg</span><span class="pct over">1000%</span></div>
+      <div class="sc-row"><span class="k">Ác. Pantoténico</span><span class="v">25 mg</span><span class="pct over">500%</span></div>
+      <div class="sc-row"><span class="k">Colina</span><span class="v">25 mg</span><span class="pct low">5%</span></div>
+      <div class="sc-row"><span class="k">Inositol</span><span class="v">100 mg</span><span class="pct na">—</span></div>
+    </div>
+    <div class="sc-ref">Ref: RDA/AI hombres 31–50 años (IOM/NIH). Colina AI 550mg. Inositol sin RDA establecido.</div>
+  </div>
+</div>
+
+<!-- VITAMIN D TOTAL -->
+<div class="sh"><h2>Micronutrientes Destacados</h2><div class="line"></div></div>
+
+<div class="micro-bar">
+  <div class="micro-pill" style="border-top:3px solid var(--yellow)">
+    <span class="mp-val">6,000</span>
+    <span class="mp-label">Vit D3 (IU)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--blue)">
+    <span class="mp-val">665</span>
+    <span class="mp-label">EPA (mg)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--blue)">
+    <span class="mp-val">445</span>
+    <span class="mp-label">DHA (mg)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--green)">
+    <span class="mp-val">100</span>
+    <span class="mp-label">Vit K2 (mcg)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--red)">
+    <span class="mp-val">5</span>
+    <span class="mp-label">Creatina (g)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--purple)">
+    <span class="mp-val">680</span>
+    <span class="mp-label">Folato (mcg)</span>
+  </div>
+  <div class="micro-pill" style="border-top:3px solid var(--purple)">
+    <span class="mp-val">80</span>
+    <span class="mp-label">Niacina (mg)</span>
+  </div>
+</div>
+
+
+<!-- PRODUCT GALLERY -->
+<div class="sh"><h2>Productos y Suplementos Utilizados</h2><div class="line"></div></div>
+
+<div class="gallery">
+  <div class="gallery-item">
+    <img src="Proteina.jpeg" alt="Proteína en polvo">
+    <div class="gi-name">Proteína</div>
+  </div>
+  <div class="gallery-item">
+    <img src="Pan-Integral.jpeg" alt="Pan integral">
+    <div class="gi-name">Pan Integral</div>
+  </div>
+  <div class="gallery-item">
+    <img src="Yogurt.jpeg" alt="Yogurt">
+    <div class="gi-name">Yogurt</div>
+  </div>
+  <div class="gallery-item">
+    <img src="Pasta-de-Mani.jpeg" alt="Pasta de maní">
+    <div class="gi-name">Pasta de Maní</div>
+  </div>
+  <div class="gallery-item">
+    <img src="leche-en-polvo.webp" alt="Leche en polvo">
+    <div class="gi-name">Leche en Polvo</div>
+  </div>
+  <div class="gallery-item">
+    <img src="Creatina.jpeg" alt="Creatina">
+    <div class="gi-name">Creatina</div>
+  </div>
+  <div class="gallery-item">
+    <img src="omega3.jpeg" alt="Omega 3">
+    <div class="gi-name">Omega 3</div>
+  </div>
+  <div class="gallery-item">
+    <img src="Vitamin-D3-K2.jpeg" alt="Vitamina D3 + K2">
+    <div class="gi-name">Vitamina D3 + K2</div>
+  </div>
+  <div class="gallery-item">
+    <img src="VitaminBComplex.jpeg" alt="Complejo Vitamínico B">
+    <div class="gi-name">Complejo B</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Datos nutricionales extraídos de las etiquetas de los productos utilizados.<br>
+  Valores de huevo, banana, miel y café basados en tablas nutricionales estándar (USDA).
+</div>
+
+</div><!-- /wrap -->
+</body>
+</html>
