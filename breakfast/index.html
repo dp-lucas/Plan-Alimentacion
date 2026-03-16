@@ -40,7 +40,7 @@ body {
 /* ── HERO ── */
 .hero {
   background: #000;
-  padding: 56px 24px 0;
+  padding: 56px 24px 48px;
   text-align: center;
 }
 
@@ -78,7 +78,7 @@ body {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: var(--radius) var(--radius) 0 0;
+  border-radius: var(--radius);
 }
 
 /* ── CONTENT ── */
@@ -205,16 +205,6 @@ body {
 .c-mid { background: var(--tertiary); }
 .c-light { background: var(--quaternary); }
 
-/* ── BAR ── */
-.bar {
-  display: flex;
-  height: 4px;
-  gap: 3px;
-  margin-bottom: 32px;
-}
-
-.bar div { border-radius: 2px; }
-
 /* ── SECTION TITLE ── */
 h2.st {
   font-size: 1.25rem;
@@ -295,6 +285,16 @@ h2.st {
 .tbl .row-sub td {
   color: var(--tertiary);
   font-size: .78rem;
+}
+
+.col-hint {
+  font-family: -apple-system,'Inter','SF Pro Text',sans-serif;
+  font-size: .55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--tertiary);
+  margin-top: 2px;
 }
 
 /* ── SUPPLEMENTS ── */
@@ -492,13 +492,6 @@ h2.st {
   </div>
 </div>
 
-<!-- BAR -->
-<div class="bar">
-  <div style="flex:27;background:#1d1d1f"></div>
-  <div style="flex:45;background:#86868b"></div>
-  <div style="flex:28;background:#aeaeb2"></div>
-</div>
-
 <!-- INGREDIENTS -->
 <h2 class="st">Ingredientes</h2>
 
@@ -528,7 +521,7 @@ h2.st {
     <tr><td class="name">Pasta de mani</td><td>10g</td><td class="r">58.5</td><td class="r">2.4</td><td class="r">1.5</td><td class="r">4.7</td><td class="r">0.8</td></tr>
     <tr><td class="name">Cafe negro</td><td>1 taza</td><td class="r">2.0</td><td class="r">0.0</td><td class="r">0.0</td><td class="r">0.0</td><td class="r">0.0</td></tr>
     <tr class="row-sub"><td colspan="2">+ Suplementos (Omega 3)</td><td class="r">15.0</td><td class="r">—</td><td class="r">—</td><td class="r">1.5</td><td class="r">—</td></tr>
-    <tr class="row-total"><td colspan="2">Total Desayuno</td><td class="r">532.8</td><td class="r">35.5</td><td class="r">60.3</td><td class="r">16.7</td><td class="r">8.2</td></tr>
+    <tr class="row-total"><td colspan="2">Total Desayuno</td><td class="r">532.8<div class="col-hint">kcal</div></td><td class="r">35.5<div class="col-hint">prot</div></td><td class="r">60.3<div class="col-hint">carb</div></td><td class="r">16.7<div class="col-hint">grasas</div></td><td class="r">8.2<div class="col-hint">fibra</div></td></tr>
   </tbody>
 </table>
 </div>
@@ -537,12 +530,6 @@ h2.st {
 <!-- SUPPLEMENTS -->
 <h2 class="st">Suplementacion</h2>
 
-<div class="tags">
-  <span class="tag">Hombre, 35 anos</span>
-  <span class="tag">94 kg</span>
-  <span class="tag">177 cm</span>
-  <span class="tag">% valor diario recomendado</span>
-</div>
 
 <div class="sstack">
 
