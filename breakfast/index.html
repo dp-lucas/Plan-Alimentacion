@@ -38,9 +38,22 @@ body {
 .mono { font-family: 'JetBrains Mono','SF Mono',ui-monospace,monospace; }
 
 /* ── HERO ── */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--quaternary);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.back:hover { color: #f5f5f7; }
+
 .hero {
   background: #000;
-  padding: 56px 24px 48px;
+  padding: 20px 24px 48px;
   text-align: center;
 }
 
@@ -440,6 +453,9 @@ h2.st {
 
 <!-- HERO -->
 <div class="hero">
+  <div style="text-align:left;max-width:600px;margin:0 auto 24px">
+    <a href="../" class="back">&#8249; Plan de Alimentacion</a>
+  </div>
   <span class="hero-label">Reporte Nutricional</span>
   <h1>Desayuno</h1>
   <p>Ingredientes, macronutrientes y suplementacion</p>
